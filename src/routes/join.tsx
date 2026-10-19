@@ -73,8 +73,8 @@ function Join() {
               <input className="login-input" name="name" placeholder="পূর্ণ নাম *" required maxLength={100} />
               <input className="login-input" name="phone" placeholder="মোবাইল নম্বর (01XXXXXXXXX) *" required pattern="01[0-9]{9}" />
               <input className="login-input" name="email" type="email" placeholder="ইমেইল (ঐচ্ছিক)" />
-              <input className="login-input" name="password" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর) *" required minLength={6} maxLength={72} autoComplete="new-password" />
-              <input className="login-input" name="confirm" type="password" placeholder="আবার পাসওয়ার্ড *" required minLength={6} autoComplete="new-password" />
+              <input className="login-input" name="password" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৪ অক্ষর) *" required minLength={4} maxLength={72} autoComplete="new-password" />
+              <input className="login-input" name="confirm" type="password" placeholder="আবার পাসওয়ার্ড *" required minLength={4} autoComplete="new-password" />
               <label className="login-remember"><input type="checkbox" name="terms" required /> আমি শর্তাবলী মেনে নিচ্ছি</label>
               {err && <p role="alert" style={{ color: "#c00", fontWeight: 600 }}>{err}</p>}
               <button className="login-submit" type="submit" disabled={busy || !sponsor}>{busy ? "রেজিস্টার হচ্ছে…" : "রেজিস্টার করুন"}</button>
