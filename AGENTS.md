@@ -30,3 +30,4 @@
 - Master file paths resolve through their canonical existing ancestor with normalized Windows separators; this permits missing XAMPP files without allowing traversal or symlink escapes.
 - Member profile changes use the existing user_profiles table and locked user row, preserving the source legacy schema rather than replacing it.
 - Fit the member portal through a single measured desktop canvas in the shared MemberShell; scale the whole canvas rather than adding mobile reflow rules, so every page preserves reference proportions.
+- New members must register through a sponsor referral link (except the very first account); the company ROOT member is created via the signed /api/master/root/ensure call so its password never sits in code.

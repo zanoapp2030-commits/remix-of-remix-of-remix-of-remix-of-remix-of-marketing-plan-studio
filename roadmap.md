@@ -49,3 +49,7 @@
 - [ ] Test every public page across mobile, tablet and desktop widths; repair observed layout and interaction bugs.
 - [ ] Verify image viewers, audio playback, video controls, menus, FAQs and enquiry forms.
 - [ ] Run regression tests and record remaining external limitations.
+## Referral join + ROOT
+- [x] Join page via referral link (auto sponsor + auto placement)
+- [x] ROOT button on login page, referral link copy on dashboard
+- [ ] Deploy to live server — blocked: live server returns 502 (down)
