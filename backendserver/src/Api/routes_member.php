@@ -23,7 +23,7 @@ $router->post('/api/member/register', function () {
     if (mb_strlen(trim((string) $b['name'])) > 100) throw new HttpError('Name is too long');
     if (!empty($b['email']) && !filter_var($b['email'], FILTER_VALIDATE_EMAIL)) throw new HttpError('Valid email required');
     // Only the very first account (empty system) may join without a sponsor link.
-    if (empty($b['referral_code']) && DB::one('SELECT id FROM lo_tree LIMIT 1')) throw new HttpError('A sponsor referral link is required to register');
+    if (empty($b['referral_code']) && DB::one('SELECT id FROM lo_tree LIMIT 1', [])) throw new HttpError('A sponsor referral link is required to register');
     if (DB::one('SELECT id FROM users WHERE phone = ?', [$b['phone']])) throw new HttpError('Phone already registered', 409);
 
     $sponsorId = null;
