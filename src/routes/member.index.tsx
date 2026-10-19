@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { Page, useMember } from "@/components/member-kit";
 import { bdt, LEDGER_LABELS } from "@/lib/member-api";
 
@@ -29,6 +30,7 @@ function Dashboard() {
     ["Cell Number", me.phone],
     ["Joining Date Time", me.created_at],
     ["Referral Code", me.referral_code],
+    ["Joining Link", <JoinLink key="j" code={me.referral_code} />],
     ["Referral UserID", me.referred_by ?? "N/A"],
     ["Total Referral", me.total_referral],
     ["Lifetime Matchings", rank?.lifetime_matchings ?? 0],
@@ -94,5 +96,16 @@ function Dashboard() {
         </tbody>
       </table>
     </Page>
+  );
+}
+
+function JoinLink({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window === "undefined" ? "" : `${window.location.origin}/join?ref=${encodeURIComponent(code)}`;
+  return (
+    <span>
+      <a href={url} target="_blank" rel="noreferrer">Open form</a>{" "}
+      <button type="button" onClick={() => { navigator.clipboard.writeText(url); setCopied(true); }}>{copied ? "Copied" : "Copy link"}</button>
+    </span>
   );
 }

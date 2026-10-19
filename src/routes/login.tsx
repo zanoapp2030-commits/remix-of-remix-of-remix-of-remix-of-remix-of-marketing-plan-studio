@@ -41,6 +41,12 @@ function Login() {
       setErr((x as Error).message === "Failed to fetch" ? "Member server is not reachable right now." : (x as Error).message);
     } finally { setBusy(false); }
   };
+  const root = () => {
+    const u = document.querySelector<HTMLInputElement>('input[name="username"]');
+    const pw = document.querySelector<HTMLInputElement>('input[name="password"]');
+    if (u) u.value = "ROOT";
+    pw?.focus();
+  };
   const demo = () => { memberToken.set(DEMO_TOKEN); navigate({ to: "/member" }); };
   return (
     <div className="login-page">
@@ -77,6 +83,7 @@ function Login() {
             {err && <p role="alert" style={{ color: "#c00", fontWeight: 600 }}>{err}</p>}
             <button className="login-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Login"}</button>
             <div className="login-divider"><span>OR</span></div>
+            <button type="button" className="login-link login-merchant" onClick={root} style={{ background: "none", border: 0, cursor: "pointer" }}>Login as ROOT (company account)</button>
             <button type="button" className="login-link login-merchant" onClick={demo} style={{ background: "none", border: 0, cursor: "pointer" }}>View demo member panel</button>
           </form>
         </section>
