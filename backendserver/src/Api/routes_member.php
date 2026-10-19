@@ -14,10 +14,15 @@ use LifeOS\Engine\Rank;
 // ---- Auth ----
 $router->post('/api/member/register', function () {
     $b = Http::body();
+    if (empty($b['pin']) && !empty($b['password'])) $b['pin'] = $b['password'];
     foreach (['phone', 'pin', 'name'] as $f) {
         if (empty($b[$f])) throw new HttpError("$f required");
     }
     if (!preg_match('/^01[3-9]\d{8}$/', (string) $b['phone'])) throw new HttpError('Valid BD phone required');
+    if (strlen((string) $b['pin']) < 6 || strlen((string) $b['pin']) > 72) throw new HttpError('Password must be 6–72 characters');
+    if (mb_strlen(trim((string) $b['name'])) > 100) throw new HttpError('Name is too long');
+    if (!empty($b['email']) && !filter_var($b['email'], FILTER_VALIDATE_EMAIL)) throw new HttpError('Valid email required');
+    if (empty($b['referral_code'])) throw new HttpError('A sponsor referral link is required to register');
     if (DB::one('SELECT id FROM users WHERE phone = ?', [$b['phone']])) throw new HttpError('Phone already registered', 409);
 
     $sponsorId = null;
@@ -43,7 +48,18 @@ $router->post('/api/member/register', function () {
         return $id;
     });
 
-    Http::ok(['user_id' => $result, 'token' => Auth::issue('m', $result)]);
+    $u = DB::one('SELECT * FROM users WHERE id = ?', [$result]);
+    Http::ok(['user_id' => $result, 'life_id' => $u['life_id'], 'token' => Auth::issue('m', $result)]);
+});
+
+// Public sponsor lookup for the join page: name + Life ID only, never financial data.
+$router->get('/api/member/sponsor', function () {
+    $code = (string) ($_GET['code'] ?? '');
+    if (!preg_match('/^[A-Za-z0-9]{4,20}$/', $code)) throw new HttpError('Invalid referral code');
+    $sp = DB::one('SELECT u.id, u.life_id FROM users u WHERE u.referral_code = ? AND u.status <> "suspended"', [$code]);
+    if (!$sp) throw new HttpError('Invalid referral code', 404);
+    $name = DB::val('SELECT name FROM user_profiles WHERE user_id = ? ORDER BY id LIMIT 1', [(int) $sp['id']]);
+    Http::ok(['name' => $name ?: $sp['life_id'], 'life_id' => $sp['life_id']]);
 });
 
 $router->post('/api/member/login', function () {

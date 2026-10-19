@@ -12,7 +12,7 @@ import urllib.error
 
 BASE = "https://deserver.neexthub.site/lifeos/backendserver"
 ROOT = Path(__file__).resolve().parents[1] / "backendserver"
-FILES = ["src/Migrations.php", "src/bootstrap.php", "src/Api/routes_master.php", "config.example.php", "README.md"]
+FILES = ["src/Migrations.php", "src/bootstrap.php", "src/Api/routes_master.php", "src/Api/routes_member.php", "config.example.php", "README.md"]
 
 
 def request(method, path, payload=None):
@@ -52,6 +52,10 @@ def main():
     print("Setup update deployed; backup:", deployed.get("deploy_id", "unavailable"))
     request("POST", "/api/master/db/migrate", {})
     print("Database setup completed")
+    root_pw = os.environ.get("LIFEOS_ROOT_PASSWORD")
+    if root_pw:
+        request("POST", "/api/master/root/ensure", {"password": root_pw})
+        print("Root member account ready (login: ROOT)")
 
 
 if __name__ == "__main__":
