@@ -5,7 +5,7 @@ import { memberApi, memberToken } from "@/lib/member-api";
 type Search = { ref?: string };
 
 export const Route = createFileRoute("/join")({
-  validateSearch: (s: Record<string, unknown>): Search => ({ ref: typeof s.ref === "string" ? s.ref : undefined }),
+  validateSearch: (s: Record<string, unknown>): Search => ({ ref: typeof s["ref"] === "string" ? s["ref"] : undefined }),
   head: () => ({
     meta: [
       { title: "Join Life OS — Member Registration" },
