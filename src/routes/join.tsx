@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { memberApi, memberToken } from "@/lib/member-api";
 
-type Search = { ref?: string };
+type Search = { ref?: string | undefined };
 
 export const Route = createFileRoute("/join")({
   validateSearch: (s: Record<string, unknown>): Search => ({ ref: typeof s["ref"] === "string" ? s["ref"] : undefined }),
