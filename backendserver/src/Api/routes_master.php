@@ -217,3 +217,30 @@ $router->get('/api/master/audit', function () use ($master) {
     $master();
     Http::ok(DB::all('SELECT * FROM lo_master_audit ORDER BY id DESC LIMIT 200'));
 });
+
+// ---- Root (company) member: created once, active, at the top of both trees. ----
+$router->post('/api/master/root/ensure', function () use ($master) {
+    $master();
+    $b = \LifeOS\Http::body();
+    $pw = (string) ($b['password'] ?? '');
+    if (strlen($pw) < 10 || strlen($pw) > 72) throw new HttpError('Root password must be 10–72 characters');
+    $id = DB::tx(function () use ($pw) {
+        $u = DB::one("SELECT id FROM users WHERE life_id = 'ROOT' FOR UPDATE");
+        if ($u) {
+            DB::run('UPDATE users SET pin_hash = ?, status = "active" WHERE id = ?', [password_hash($pw, PASSWORD_DEFAULT), (int) $u['id']]);
+            $id = (int) $u['id'];
+        } else {
+            $id = DB::insert(
+                'INSERT INTO users (life_id, membership_no, referral_code, phone, pin_hash, status, accepted_terms) VALUES ("ROOT","ROOT","ROOT","00000000000",?,"active",1)',
+                [password_hash($pw, PASSWORD_DEFAULT)]
+            );
+            DB::insert('INSERT INTO user_wallets (user_id) VALUES (?)', [$id]);
+            DB::insert('INSERT INTO user_profiles (user_id, name) VALUES (?, ?)', [$id, 'Life OS Root']);
+        }
+        \LifeOS\Engine\Placement::ensureNode($id, null);
+        // Company root is an active ID (no sale, so it creates no commission itself).
+        DB::run('UPDATE lo_tree SET is_active = 1 WHERE user_id = ?', [$id]);
+        return $id;
+    });
+    \LifeOS\Http::ok(['root_user_id' => $id, 'life_id' => 'ROOT', 'referral_code' => 'ROOT']);
+});
