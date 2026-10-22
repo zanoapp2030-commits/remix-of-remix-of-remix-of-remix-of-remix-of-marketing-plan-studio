@@ -27,7 +27,7 @@ export async function memberApi<T = unknown>(path: string, init: { method?: stri
     headers: {
       "Content-Type": "application/json",
       // X-Auth-Token is a fallback for servers where Apache strips Authorization.
-      ...(token ? { Authorization: `Bearer ${token}`, "X-Auth-Token": token } : {}),
+      ...(token ? { Authorization: `Bearer ${token}`, "X-Auth-Token": `Bearer ${token}` } : {}),
     },
     body: init.body ? JSON.stringify(init.body) : null,
   });
