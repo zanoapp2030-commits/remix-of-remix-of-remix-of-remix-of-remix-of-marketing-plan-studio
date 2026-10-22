@@ -108,7 +108,7 @@ final class Http
         if ($origin) header("Access-Control-Allow-Origin: $origin");
         else header('Access-Control-Allow-Origin: *');
         header('Vary: Origin');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Auth-Token, X-Requested-With');
         header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
         header('Access-Control-Max-Age: 86400');
     }

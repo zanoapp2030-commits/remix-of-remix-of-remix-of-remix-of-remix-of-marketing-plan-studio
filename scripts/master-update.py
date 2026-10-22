@@ -12,7 +12,7 @@ import urllib.error
 
 BASE = "https://deserver.neexthub.site/lifeos/backendserver"
 ROOT = Path(__file__).resolve().parents[1] / "backendserver"
-FILES = ["src/Migrations.php", "src/bootstrap.php", "src/Api/routes_master.php", "src/Api/routes_member.php", "config.example.php", "README.md"]
+FILES = ["src/Migrations.php", "src/bootstrap.php", "src/Auth.php", "src/Api/routes_master.php", "src/Api/routes_member.php", "config.example.php", "README.md", ".htaccess"]
 
 
 def request(method, path, payload=None):
