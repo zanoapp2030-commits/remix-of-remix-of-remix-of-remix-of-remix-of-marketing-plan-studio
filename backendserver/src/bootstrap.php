@@ -102,14 +102,15 @@ final class Http
     public static function ok(mixed $data = null): never { self::json(['ok' => true, 'data' => $data]); }
     public static function cors(): void
     {
+        // Bearer-token API (no cookies): reflecting any origin is safe and keeps
+        // browsers working even when the deployed config has no cors_origins list.
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-        try { $allowed = Config::get('cors_origins', []); } catch (\Throwable) { $allowed = []; }
-        if ($origin && in_array($origin, $allowed, true)) {
-            header("Access-Control-Allow-Origin: $origin");
-            header('Vary: Origin');
-            header('Access-Control-Allow-Headers: Content-Type, Authorization');
-            header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        }
+        if ($origin) header("Access-Control-Allow-Origin: $origin");
+        else header('Access-Control-Allow-Origin: *');
+        header('Vary: Origin');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        header('Access-Control-Max-Age: 86400');
     }
     public static function ip(): string { return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'; }
 }
