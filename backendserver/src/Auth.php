@@ -14,7 +14,7 @@ final class Auth
 
     private static function verify(string $kind): int
     {
-        $h = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $h = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? $_SERVER['HTTP_X_AUTH_TOKEN'] ?? '';
         if (!preg_match('/^Bearer\s+([\w-]+)\.([\w-]+)$/', $h, $m)) throw new HttpError('Login required', 401);
         $sig = self::b64(hash_hmac('sha256', $m[1], Config::get('app_secret'), true));
         if (!hash_equals($sig, $m[2])) throw new HttpError('Invalid session', 401);
